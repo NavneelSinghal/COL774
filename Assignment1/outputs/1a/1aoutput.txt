@@ -1,0 +1,5 @@
+learning_rate = 0.01
+stopping_criteria = change in cost function is less than 1e-15
+theta_0 = 0.9966197905398105
+theta_1 = 0.0013401956023671431
+total_iterations = 1491

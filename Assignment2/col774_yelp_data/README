@@ -1,0 +1,21 @@
+Files:
+1. train.json: subset of training data
+2. test.json: subset of training data
+3. utils.py: python utilities useful for Yelp data
+
+--------------------------------------
+
+json fields:
+1. review_id: unique review id
+2. user_id: unique user id
+3. business_id: buisness id
+4. stars: class/rating
+5. useful: number of useful votes received 
+6. funny: number of funny votes received 
+7. cool: number of cool votes received
+8. text: user review 
+9. date: Date of the review
+
+-------------------------------------
+
+Full documentation available at: https://www.yelp.com/dataset/documentation/main
