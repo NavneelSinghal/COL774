@@ -127,7 +127,6 @@ def freshRetrieveProcessedData(trainDataFile, testDataFile):
     y_train = [int(x['stars']) for x in trainData]
     y_test = [int(x['stars']) for x in testData]
     x_train, x_test = [], []
-    # stopword removal
     toAvoid = set(stopwords.words('english'))
     for x in trainData:
         x_list = cleanPunctuation(x['text'])
