@@ -145,8 +145,6 @@ def printAccuracy(x_test, y_test, theta, phi, isTest=True):
     print(diagonal / total)
     print(confusionMatrix)
 
-# redo the whole thing mostly
-
 def main():
 
     trainDataFile = sys.argv[1]
