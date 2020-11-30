@@ -7,6 +7,9 @@ import numpy as np
 import math
 from nltk.stem import PorterStemmer
 from nltk.corpus import stopwords
+import sklearn
+import matplotlib.pyplot as plt
+import itertools
 
 stemmer = PorterStemmer()
 
@@ -42,6 +45,7 @@ def test(x_test, theta, phi):
     global dictionary
     numClasses = len(phi)
     ans = []
+    scores = np.zeros((len(x_test), numClasses))
     for x in x_test:
         p_max = -1e9
         k_max = -1
@@ -52,11 +56,12 @@ def test(x_test, theta, phi):
             for word in x:
                 if word in dictionary:
                     p += math.log(theta_k[dictionary[word]]) * x[word]
+            scores[len(ans), k] = p
             if p > p_max:
                 p_max = p
                 k_max = k
         ans.append(k_max + 1)
-    return ans
+    return ans, scores
 
 def cleanPunctuation(s):
     return re.sub(r'[^\w\s]', ' ', s.lower()).split()
@@ -87,8 +92,11 @@ def logfreq_dict(d):
     return f
 
 def getData(dataFile, processing='simple'):
-    if processing not in ['simple', 'stemming', 'bigram+logfreq']:
+    if processing not in ['simple', 'stemming', 'bigram+logfreq', 'bigram', 'logfreq']:
         raise Exception('Invalid processing method')
+    isBigram = processing.find('bigram') != -1
+    isLogFreq = processing.find('logfreq') != -1
+    isStem = isBigram or isLogFreq or (processing.find('stem') != -1)
     data = []
     with open(dataFile) as data_:
         for line in data_:
@@ -99,15 +107,15 @@ def getData(dataFile, processing='simple'):
     for x in data:
         x_list = cleanPunctuation(x['text'])
         toAdd = []
-        if processing == 'simple':
+        if not isStem:
             toAdd = x_list
         else:
             for word in x_list:
                 if word not in toAvoid:
                     toAdd.append(stem(word))
-            if processing == 'bigram+logfreq':
+            if isBigram:
                 toAdd = [toAdd[i] + ' ' + toAdd[i + 1] for i in range(len(toAdd) - 1)]
-        if processing == 'bigram+logfreq':
+        if isLogFreq:
             x_data.append(logfreq_dict(freq_dict(toAdd)))
         else:
             x_data.append(freq_dict(toAdd))
@@ -115,7 +123,7 @@ def getData(dataFile, processing='simple'):
 
 def printAccuracy(x_test, y_test, theta, phi, isTest=True):
     print('testing model on', ('test' if isTest else 'training'), 'data...')
-    y_output = test(x_test, theta, phi)
+    y_output, y_scores = test(x_test, theta, phi)
     print('testing complete')
     confusionMatrix = np.array([[0 for i in range(5)] for j in range(5)])
     for i in range(len(y_output)):
@@ -125,6 +133,36 @@ def printAccuracy(x_test, y_test, theta, phi, isTest=True):
     print(diagonal, '/', total)
     print(diagonal / total)
     print(confusionMatrix)
+    fpr = dict()
+    tpr = dict()
+    roc_auc = dict()
+    y_test = sklearn.preprocessing.label_binarize(np.array(y_test), classes=[1, 2, 3, 4, 5])
+    n_classes = y_scores.shape[1]
+    y_scores_max = np.array([np.amax(y_scores, axis=1)] * n_classes).T
+    y_scores = np.exp(y_scores - y_scores_max)
+    y_scores /= np.array([np.sum(y_scores, axis=1)] * n_classes).T
+    for i in range(n_classes):
+        fpr[i], tpr[i], _ = sklearn.metrics.roc_curve(y_test[:, i], y_scores[:, i])
+        roc_auc[i] = sklearn.metrics.auc(fpr[i], tpr[i])
+    fpr["micro"], tpr["micro"], _ = sklearn.metrics.roc_curve(y_test.ravel(), y_scores.ravel())
+    roc_auc["micro"] = sklearn.metrics.auc(fpr["micro"], tpr["micro"])
+    plt.figure()
+    colors = itertools.cycle(['red', 'yellow', 'blue', 'green', 'purple'])
+    for i, color in zip(range(n_classes), colors):
+        plt.plot(fpr[i], tpr[i], color=color, lw=1,
+                 label='ROC curve of class {0} (area = {1:0.2f})'
+                 ''.format(i + 1, roc_auc[i]))
+    plt.plot(fpr["micro"], tpr["micro"],
+            label='micro-average ROC curve (area = {0:0.2f})'
+            ''.format(roc_auc["micro"]),
+            color='black', linestyle=':', lw=1)
+    plt.plot([0, 1], [0, 1], 'k--', lw=1)
+    plt.xlim([0.0, 1.0])
+    plt.ylim([0.0, 1.05])
+    plt.xlabel('False Positive Rate')
+    plt.ylabel('True Positive Rate')
+    plt.legend(loc="lower right")
+    plt.savefig(('test_roc' if isTest else 'train_roc') + '.png')
 
 def write_predictions(fname, arr):
     np.savetxt(fname, arr, fmt="%d", delimiter="\n")
@@ -146,8 +184,13 @@ def main(processing='simple', toPrint=True):
         printAccuracy(x_test, y_test, theta, phi, True)
         printAccuracy(x_train, y_train, theta, phi, False)
     else:
-        write_predictions(sys.argv[3], test(x_test, theta, phi))
+        y, _ = test(x_test, theta, phi)
+        write_predictions(sys.argv[3], y)
 
 # submission parameters: 'bigram+logfreq', False
 if __name__ == '__main__':
+    #main(processing='simple', toPrint=False)
+    #main(processing='stemming', toPrint=False)
+    #main(processing='logfreq', toPrint=False)
+    #main(processing='bigram', toPrint=False)
     main(processing='bigram+logfreq', toPrint=False)
