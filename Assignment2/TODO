@@ -1,9 +1,10 @@
 read on k-fold cross validation and so on
-feature engineering in q1
+feature engineering in q1 - done (bigram + log frequency)
 roc
-actually fill in output files
+actually fill in output files - done for Q1, remaining - Q2, Q3
 in q1, instead of enabling or disabling certain features by commenting out, actually write if statements and pass parameters
 check what we really need to output
-instead of storing the whole data, store support vectors
+instead of storing the whole data, store support vectors - done
 actually just store alpha_sv, index_sv, b -> index_sv gives x_sv and y_sv by reading off the indices after concatenating x_train[i] and x_train[j]
 last part of cross validation
+redo Q1 - done

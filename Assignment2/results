@@ -2,9 +2,12 @@ PART A
 
 Naive Bayes without stemming or lemmatization
 
+processing type: simple
+parsing training data
+parsing testing data
+training model
 testing model on test data...
 testing complete
-0.6015719648813174
 80441 / 133718
 0.6015719648813174
 [[14318  2784  1349  1091  3143]
@@ -14,7 +17,6 @@ testing complete
  [  365   344   910  6984 39558]]
 testing model on training data...
 testing complete
-0.6311753092328631
 337598 / 534872
 0.6311753092328631
 [[ 57771  10743   5415   4451  11807]
@@ -23,15 +25,18 @@ testing complete
  [  1734   4047  18394  77061  57644]
  [  1229   1119   3356  25242 161295]]
 
-real	3m1.070s
-user	2m59.977s
-sys	0m2.412s
+real	2m16.805s
+user	2m15.270s
+sys	0m1.530s
 
 Naive Bayes after stemming and stop-word removal - Porter Stemmer
 
+processing type: stemming
+parsing training data
+parsing testing data
+training model
 testing model on test data...
 testing complete
-0.5964567223560029
 79757 / 133718
 0.5964567223560029
 [[14296  2919  1473  1226  3251]
@@ -41,7 +46,6 @@ testing complete
  [  484   494  1202  7563 39803]]
 testing model on training data...
 testing complete
-0.6219282370361507
 332652 / 534872
 0.6219282370361507
 [[ 57621  11279   5907   4999  12411]
@@ -50,89 +54,38 @@ testing complete
  [  1883   4632  18892  74276  56577]
  [  1631   1658   4531  27914 162023]]
 
-real	1m52.043s
-user	1m51.491s
-sys	0m0.548s
+real	1m38.576s
+user	1m37.747s
+sys	0m0.826s
 
-Naive Bayes after same as above with Snowball Stemmer
+Naive Bayes on bigrams after stemming and stop word removal, using logarithmically scaled frequency
 
+processing type: bigram+logfreq
+parsing training data
+parsing testing data
+training model
 testing model on test data...
 testing complete
-0.5952078254236528
-79590 / 133718
-0.5952078254236528
-[[14302  2928  1480  1244  3334]
- [ 3768  3215  1633   636   321]
- [ 1108  2986  4912  2456   586]
- [  497  1210  5296 17471 14891]
- [  494   499  1210  7551 39690]]
+84521 / 133718
+0.6320839378393335
+[[16469  4003  1588   667   924]
+ [  585   675   171    16    10]
+ [  570  1342  1400   261    51]
+ [ 1489  3714  9013 15828  7688]
+ [ 1056  1104  2359 12586 50149]]
 testing model on training data...
 testing complete
-0.620905562452325
-332105 / 534872
-0.6209055624523251
-[[ 57601  11303   5958   5081  12755]
- [ 14746  14994   5683   2448   1219]
- [  4408  10857  23591   7925   2577]
- [  1886   4699  18906  74311  56572]
- [  1650   1690   4575  27829 161608]]
+480557 / 534872
+0.8984523399991026
+[[ 76330   6167   2848   1413    924]
+ [   237  30738     52     15      9]
+ [   768    912  44149     55     53]
+ [  2054   4253   7887 100460   4865]
+ [   902   1473   3777  15651 228880]]
 
-real	1m54.571s
-user	1m53.959s
-sys	0m0.608s
-
-Naive Bayes after lemmatization and stop-word removal - Word Net
-
-testing model on test data...
-testing complete
-0.6006072480892625
-80312 / 133718
-0.6006072480892625
-[[14414  2942  1441  1162  3031]
- [ 3743  3198  1564   576   276]
- [ 1104  3056  4887  2378   554]
- [  460  1173  5485 17702 14850]
- [  448   469  1154  7540 40111]]
-testing model on training data...
-testing complete
-0.6306948204430218
-337341 / 534872
-0.6306948204430218
-[[ 58088  11155   5829   4737  11367]
- [ 14457  15378   5307   2233   1097]
- [  4428  10886  24226   7267   2474]
- [  1815   4556  18938  75950  56094]
- [  1503   1568   4413  27407 163699]]
-
-real	3m25.438s
-user	3m24.090s
-sys	0m1.328s
-
-Naive Bayes on bigram after stemming and stop word removal
-testing model on test data...
-testing complete
-0.6318147145485276
-84485 / 133718
-0.6318147145485274
-[[16452  3994  1610   676   957]
- [  594   692   175    16    11]
- [  588  1356  1420   267    52]
- [ 1492  3702  9009 15910  7791]
- [ 1043  1094  2317 12489 50011]]
-testing model on training data...
-testing complete
-0.8981980735577858
-480421 / 534872
-0.8981980735577858
-[[ 76281   6156   2862   1441    958]
- [   248  30747     55     16     10]
- [   802    921  44215     58     61]
- [  2063   4262   7856 100502   5026]
- [   897   1457   3725  15577 228676]]
-
-real	3m56.337s
-user	3m53.502s
-sys	0m2.812s
+real	2m30.158s
+user	2m28.295s
+sys	0m1.864s
 
 
 PART B
