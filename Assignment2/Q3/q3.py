@@ -32,10 +32,12 @@ def NaiveBayes(x_train, y_train, x_test, y_test, toPrint):
     else:
         print(list(y_predicted))
 
+# [0.01, 0.1, 1, 3, 5] - best is 0.1
 # TODO: implement validation set - takes a lot of time
 def LinearSVM(x_train, y_train, x_test, y_test, toPrint):
     from sklearn.svm import LinearSVC
-    classifier = LinearSVC().fit(x_train, y_train)
+    from sklearn.pipeline import Pipeline
+    classifier = LinearSVC(C=0.01, loss='hinge').fit(x_train, y_train)
     y_predicted = classifier.predict(x_test)
     if toPrint:
         from sklearn.metrics import accuracy_score
@@ -77,5 +79,6 @@ def main(option=1, toPrint=True):
 
     return
 
+# make a new function with only one model
 if __name__ == '__main__':
-    main(option=3, toPrint=False)
+    main(option=2, toPrint=True)

@@ -404,11 +404,169 @@ def mainB():
         print(confusion_matrix)
         print('sklearn validation accuracy:', np.trace(confusion_matrix) / np.sum(confusion_matrix))
 
+# remember to print y as integers
 def mainBCrossValidation():
 
-    pass
+    C_poss = [1e-5, 1e-3, 1.0, 5.0, 10.0]
+
+    trainDataFile = sys.argv[1]
+    testDataFile = sys.argv[2]
+
+    x_train, y_train = extractFeaturesAndLabels(trainDataFile)
+    x_test, y_test = extractFeaturesAndLabels(testDataFile)
+
+    x_train /= 255
+    x_train_old = x_train
+    x_test /= 255
+    x_test_old = x_test
+
+    # first shuffle x_train, y_train
+    p = np.random.permutation(x_train.shape[0])
+    x_train = x_train[p]
+    y_train = y_train[p]
+
+    # then split into 5 sets
+    num_folds = 5
+    x_folds = []
+    y_folds = []
+    chunk_size = x_train.shape[0] // num_folds
+    for i in range(num_folds - 1):
+        x_folds.append(x_train[chunk_size * i : chunk_size * (i + 1), :])
+        y_folds.append(y_train[chunk_size * i : chunk_size * (i + 1)])
+    x_folds.append(x_train[chunk_size * (num_folds - 1) : , :])
+    y_folds.append(y_train[chunk_size * (num_folds - 1) :])
+
+    # then for each C, train on 4 sets and validate on the last set
+    # store mean accuracy for each C in a list
+    # then store accuracy from training and test data completely in a new array
+    from sklearn import svm, metrics
+    c_accuracy = []
+    c_test_accuracy = []
+    for C in C_poss:
+        current_accuracy = 0
+        print('running on C =', C)
+        for i in range(num_folds):
+            print('running on fold number', i + 1)
+            # create a training set and the remaining set is a test set
+            current_x_train = np.concatenate(tuple([x_folds[j] for j in range(num_folds) if j != i]))
+            current_y_train = np.concatenate(tuple([y_folds[j] for j in range(num_folds) if j != i]))
+            current_x_test = x_folds[i]
+            current_y_test = y_folds[i]
+            #print(current_x_train.shape)
+            #print(current_x_test.shape)
+            #print(current_y_train.shape)
+            #print(current_y_test.shape)
+            t = time.time()
+            clf = svm.SVC(C=C, gamma=0.05)
+            clf.fit(current_x_train, current_y_train)
+            current_accuracy += metrics.accuracy_score(current_y_test, clf.predict(current_x_test))
+            #print(current_accuracy)
+            print('time taken:', time.time() - t)
+        current_accuracy /= 5
+        c_accuracy.append(current_accuracy)
+        print(c_accuracy)
+        print('using C =', C, 'for testing on whole model')
+        clf = svm.SVC(C=C, gamma=0.05)
+        clf.fit(x_train, y_train)
+        c_test_accuracy.append(metrics.accuracy_score(y_test, clf.predict(x_test)))
+        print(c_test_accuracy)
+
+    print(c_accuracy)
+    print(c_test_accuracy)
+    C = C_poss[c_accuracy.index(max(c_accuracy))]
+    print('C from cross-validation:', C)
+
+    import matplotlib.pyplot as plt
+    plt.plot(C_poss, c_accuracy, label='Validation accuracy')
+    plt.plot(C_poss, c_test_accuracy, label='Test accuracy')
+    plt.xscale('log')
+    plt.legend()
+    plt.xlabel('C')
+    plt.ylabel('Accuracy')
+    plt.savefig('hyperparameter.png')
+
+# saving predictions to file
+def write_predictions(fname, arr):
+    np.savetxt(fname, arr, fmt="%d", delimiter="\n")
+
+# do validation and on less C values
+def finalSubmission():
+
+    C_poss = [1, 5, 10]
+
+    trainDataFile = sys.argv[1]
+    testDataFile = sys.argv[2]
+
+    x_train, y_train = extractFeaturesAndLabels(trainDataFile)
+    x_test, y_test = extractFeaturesAndLabels(testDataFile)
+
+    x_train /= 255
+    x_train_old = x_train
+    x_test /= 255
+    x_test_old = x_test
+
+    p = np.random.permutation(x_train.shape[0])
+    x_train = x_train[p]
+    y_train = y_train[p]
+
+    # 4 : 1 split for test : validation
+    num_folds = 5
+    x_folds = []
+    y_folds = []
+    chunk_size = x_train.shape[0] // num_folds
+    tuning_x_train = x_train[:chunk_size * (num_folds - 1), :]
+    tuning_y_train = y_train[:chunk_size * (num_folds - 1)]
+    tuning_x_test = x_train[chunk_size * (num_folds - 1):, :]
+    tuning_y_test = y_train[chunk_size * (num_folds - 1):]
+
+    from sklearn import svm, metrics
+    c_accuracy = []
+    for C in C_poss:
+        # train classifier and get accuracy
+        clf = svm.SVC(C=C, gamma=0.05)
+        clf.fit(tuning_x_train, tuning_y_train)
+        current_accuracy = metrics.accuracy_score(tuning_y_test, clf.predict(tuning_x_test))
+        c_accuracy.append(current_accuracy)
+
+    # choose best C
+    C = C_poss[c_accuracy.index(max(c_accuracy))]
+
+    x_train = splitData(x_train, y_train)
+    x_test = splitData(x_test, y_test)
+
+    b = [[None for i in range(10)] for j in range(10)]
+    alpha_sv = [[None for i in range(10)] for j in range(10)]
+    sv_indices = [[None for i in range(10)] for j in range(10)]
+
+    # training
+    for i in range(10):
+        for j in range(i + 1, 10):
+            x_concat = np.concatenate((x_train[i], x_train[j]))
+            y_concat = np.concatenate((-1 * np.ones(len(x_train[i])), np.ones(len(x_train[j]))))
+            b[i][j], alpha_sv[i][j], sv_indices[i][j] = efficientComputeParametersGaussianKernel(x_concat, y_concat, c=C)
+
+    # testing
+    y_test_prediction_freq = [[0 for i in range(10)] for j in range(len(y_test))]
+    for i in range(10):
+        for j in range(i + 1, 10):
+            supportVectorIndices = sv_indices[i][j]
+            x_sv = np.concatenate((x_train[i], x_train[j]))[supportVectorIndices]
+            y_sv = np.concatenate((-1 * np.ones(len(x_train[i])), np.ones(len(x_train[j]))))[supportVectorIndices]
+            y_predicted = testGaussian(x_test_old, alpha_sv[i][j], b[i][j], x_sv, y_sv, gamma=0.05)
+            for k in range(len(x_test_old)):
+                pred = y_predicted[k]
+                if pred == -1:
+                    y_test_prediction_freq[k][i] += 1
+                else:
+                    y_test_prediction_freq[k][j] += 1
+    y_predicted = []
+    for k in range(len(y_test)):
+        y_predicted.append(y_test_prediction_freq[k].index(max(y_test_prediction_freq[k])))
+    write_predictions(sys.argv[3], np.array(y_predicted))
 
 if __name__ == '__main__':
     #mainA(True)
     #mainA(False)
-    mainB()
+    #mainB()
+    #mainBCrossValidation()
+    finalSubmission()

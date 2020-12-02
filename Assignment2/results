@@ -1,5 +1,10 @@
 PART A
 
+random prediction
+0.19955428588522114
+majority prediction
+0.439895900327555
+
 Naive Bayes without stemming or lemmatization
 
 processing type: simple
@@ -217,6 +222,208 @@ sklearn validation confusion matrix:
  [  0   0   0   0   0   5   0  11   0 235]]
 sklearn validation accuracy: 0.8792
 
+Cross validation:
+running on C = 1e-05
+running on fold number 1
+time taken: 613.1885828971863
+running on fold number 2
+time taken: 625.6278040409088
+running on fold number 3
+time taken: 615.585373878479
+running on fold number 4
+time taken: 610.3044753074646
+running on fold number 5
+time taken: 609.0876822471619
+[0.09506666666666666]
+using C = 1e-05 for testing on whole model
+[0.5736]
+running on C = 0.001
+running on fold number 1
+time taken: 622.9513943195343
+running on fold number 2
+time taken: 620.3440823554993
+running on fold number 3
+time taken: 605.1896398067474
+running on fold number 4
+time taken: 598.8741302490234
+running on fold number 5
+time taken: 611.940114736557
+[0.09506666666666666, 0.09506666666666666]
+using C = 0.001 for testing on whole model
+[0.5736, 0.5736]
+running on C = 1.0
+running on fold number 1
+time taken: 184.30680537223816
+running on fold number 2
+time taken: 186.11447381973267
+running on fold number 3
+time taken: 187.3239345550537
+running on fold number 4
+time taken: 184.95756649971008
+running on fold number 5
+time taken: 189.33849716186523
+[0.09506666666666666, 0.09506666666666666, 0.8809333333333335]
+using C = 1.0 for testing on whole model
+[0.5736, 0.5736, 0.8808]
+running on C = 5.0
+running on fold number 1
+time taken: 203.21596837043762
+running on fold number 2
+time taken: 200.68732476234436
+running on fold number 3
+time taken: 201.6562623977661
+running on fold number 4
+time taken: 200.54676485061646
+running on fold number 5
+time taken: 201.812162399292
+[0.09506666666666666, 0.09506666666666666, 0.8809333333333335, 0.8833333333333334]
+using C = 5.0 for testing on whole model
+[0.5736, 0.5736, 0.8808, 0.8828]
+running on C = 10.0
+running on fold number 1
+time taken: 275.10893654823303
+running on fold number 2
+time taken: 211.60487270355225
+running on fold number 3
+time taken: 220.8106029033661
+running on fold number 4
+time taken: 218.17184376716614
+running on fold number 5
+time taken: 219.98500800132751
+[0.09506666666666666, 0.09506666666666666, 0.8809333333333335, 0.8833333333333334, 0.8831999999999999]
+using C = 10.0 for testing on whole model
+[0.5736, 0.5736, 0.8808, 0.8828, 0.8824]
+[0.09506666666666666, 0.09506666666666666, 0.8809333333333335, 0.8833333333333334, 0.8831999999999999]
+[0.5736, 0.5736, 0.8808, 0.8828, 0.8824]
+C from cross-validation: 5.0
+
+real	201m18.734s
+user	201m16.585s
+sys	0m1.675s
+
+final submission:
+
+parsing begins
+parsing ends
+C = 1 starting
+time taken: 191.94259881973267
+C = 5 starting
+time taken: 205.3591752052307
+C = 10 starting
+time taken: 202.75208115577698
+[0.8828888888888888, 0.8882222222222222, 0.8882222222222222]
+5
+training starts
+3.5762786865234375e-06
+running classifier: 0 1
+25.317655324935913
+running classifier: 0 2
+48.505249977111816
+running classifier: 0 3
+70.30804920196533
+running classifier: 0 4
+96.17573666572571
+running classifier: 0 5
+123.59826993942261
+running classifier: 0 6
+152.6693320274353
+running classifier: 0 7
+177.04846930503845
+running classifier: 0 8
+202.27593207359314
+running classifier: 0 9
+227.7261254787445
+running classifier: 1 2
+254.42513298988342
+running classifier: 1 3
+281.45205211639404
+running classifier: 1 4
+311.28944420814514
+running classifier: 1 5
+341.801864862442
+running classifier: 1 6
+369.2447648048401
+running classifier: 1 7
+402.93857073783875
+running classifier: 1 8
+436.39166593551636
+running classifier: 1 9
+468.34695744514465
+running classifier: 2 3
+498.4327549934387
+running classifier: 2 4
+522.2059006690979
+running classifier: 2 5
+547.7374370098114
+running classifier: 2 6
+569.9640216827393
+running classifier: 2 7
+596.5312373638153
+running classifier: 2 8
+624.9458079338074
+running classifier: 2 9
+654.791562795639
+running classifier: 3 4
+684.7931632995605
+running classifier: 3 5
+710.9324290752411
+running classifier: 3 6
+738.727682352066
+running classifier: 3 7
+769.6461555957794
+running classifier: 3 8
+807.0757436752319
+running classifier: 3 9
+839.6749811172485
+running classifier: 4 5
+864.8391423225403
+running classifier: 4 6
+889.1461005210876
+running classifier: 4 7
+930.0261397361755
+running classifier: 4 8
+962.7657570838928
+running classifier: 4 9
+994.0435879230499
+running classifier: 5 6
+1023.0302057266235
+running classifier: 5 7
+1053.3657336235046
+running classifier: 5 8
+1084.1085457801819
+running classifier: 5 9
+1114.245751619339
+running classifier: 6 7
+1140.7170233726501
+running classifier: 6 8
+1168.2807343006134
+running classifier: 6 9
+1199.5345966815948
+running classifier: 7 8
+1224.6923606395721
+running classifier: 7 9
+1250.278242111206
+running classifier: 8 9
+training time: 1275.5476055145264
+test prediction time: 9.536962747573853
+test confusion matrix:
+[[427   4  10  16   2   0  76   0   1   0]
+ [  0 482   0   2   1   0   0   0   0   0]
+ [  6   3 412   2  45   0  58   0   1   0]
+ [  9   8   6 457  12   0   9   0   1   0]
+ [  2   0  34   9 397   0  29   0   1   0]
+ [  0   0   0   0   0 474   0  13   1   6]
+ [ 50   3  29   9  38   0 323   0   3   0]
+ [  0   0   0   0   0  15   0 470   1  12]
+ [  6   0   9   5   5   5   5   1 491   1]
+ [  0   0   0   0   0   6   0  16   0 481]]
+test accuracy: 0.8828
+
+real	31m41.444s
+user	128m32.738s
+sys	2m41.248s
+
+
 Q3. Comparing Naive Bayes with Linear SVM and SVM with SGD:
 
 1. Naive Bayes:
@@ -227,13 +434,50 @@ user	1m24.309s
 sys	0m1.401s
 
 2. Linear SVM:
-0.6428304341973406
+
+C = 1
+
+0.6487533465950732
 
 real	17m43.616s
 user	17m42.676s
 sys	0m0.900s
 
+C = 5
+
+0.6314632285855307
+
+real	24m33.372s
+user	24m32.475s
+sys	0m3.110s
+
+C = 3
+
+0.635965240281787
+
+real	17m59.185s
+user	17m59.355s
+sys	0m2.421s
+
+C = 0.1
+
+0.660142987481117
+
+real	11m19.245s
+user	11m19.204s
+sys	0m2.452s
+
+C = 0.01
+
+0.6537863264481969
+
+real	7m34.557s
+user	7m33.848s
+sys	0m3.018s
+
 3. SVM with SGD
+
+default params: (try multithreading)
 0.6656620649426405
 
 real	1m3.531s

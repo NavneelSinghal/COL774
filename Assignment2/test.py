@@ -14,8 +14,8 @@ def squaredDistanceMatrixOld(x, y):
     squares_x_fill = np.vstack(tuple([squares_x] * squares_y.shape[0]))
     return np.vstack(tuple([squares_y] * squares_x.shape[0])) + squares_x_fill.T - 2 * np.matmul(x, y.T)#2 * np.einsum('ik,jk->ij', x, y)
 
-a = np.array([[1, 2], [3, 4], [5, 6]])
-b = np.array([[1, 2], [3, 4], [5, 6], [7, 8]])
+#a = np.array([[1, 2], [3, 4], [5, 6]])
+#b = np.array([[1, 2], [3, 4], [5, 6], [7, 8]])
 #print('a:')
 #print(a)
 #print('b:')
@@ -39,14 +39,27 @@ def squaredDistanceMatrix(x, y, same=False):
     squares_y = np.einsum('ij,ij->i', y, y)
     return np.tile(squares_y, (squares_x.shape[0], 1)) + np.tile(squares_x, (squares_y.shape[0], 1)).T - 2 * np.matmul(x, y.T)#2 * np.einsum('ik,jk->ij', x, y)
 
-a = np.random.rand(4500, 1000)
-b = np.random.rand(1000, 1000)
+#a = np.random.rand(4500, 1000)
+#b = np.random.rand(1000, 1000)
 
-import time
-t = time.time()
-c = squaredDistanceMatrixOld(a, a)
-print(time.time() - t)
-t = time.time()
-d = squaredDistanceMatrix(a, a, True)
-print(time.time() - t)
-print(np.max(np.abs(c - d)))
+#import time
+#t = time.time()
+#c = squaredDistanceMatrixOld(a, a)
+#print(time.time() - t)
+#t = time.time()
+#d = squaredDistanceMatrix(a, a, True)
+#print(time.time() - t)
+#print(np.max(np.abs(c - d)))
+
+C_poss = [1e-5, 1e-3, 1, 5, 10]
+c_accuracy = [0.09506666666666666, 0.09506666666666666, 0.8809333333333335, 0.8833333333333334, 0.8831999999999999]
+c_test_accuracy = [0.5736, 0.5736, 0.8808, 0.8828, 0.8824]
+
+import matplotlib.pyplot as plt
+plt.plot(C_poss, c_accuracy, label='Validation accuracy')
+plt.plot(C_poss, c_test_accuracy, label='Test accuracy')
+plt.xscale('log')
+plt.legend()
+plt.xlabel('C')
+plt.ylabel('Accuracy')
+plt.savefig('hyperparameter.png')
