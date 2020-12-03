@@ -1,9 +1,0 @@
-Linear Kernel results:
-accuracy on train: 0.9997777777777778
-accuracy on test: 0.98
-accuracy on validation: 0.978
-Gaussian Kernel results:
-accuracy on train: 0.9984444444444445
-accuracy on test: 0.989
-accuracy on validation: 0.986
-
