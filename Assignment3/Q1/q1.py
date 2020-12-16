@@ -5,10 +5,6 @@ from operator import itemgetter
 import sys
 import math
 
-# replace by math.inf later
-NODE_MAX = 200000
-NODE_MAX = math.inf
-
 def freq_dict(l):
     d = defaultdict(int)
     for i in l:
@@ -21,20 +17,23 @@ def most_frequent(d):
 def choose_attribute(x, is_bool):
     j_best, split_value, min_entropy = -1, -1, math.inf
     y = x[:, -1]
+    mn, mx = np.amin(x, axis=0), np.amax(x, axis=0)
     for j in range(len(is_bool)):
         w, med = x[:, j], 0.5
         if not is_bool[j]: med = np.median(w)
-        mn, mx = np.min(w), np.max(w)
-        if mn == mx or med == mx: continue
+        if mn[j] == mx[j] or med == mx[j]: continue
         y_split = [y[w <= med], y[w > med]]
         entropy, p = 0, 1 / len(y)
         for y_ in y_split:
             h, prob = 0, 1 / len(y_)
-            _, counts = np.unique(y_, return_counts=True)
-            for value in counts:
-                temp = prob * value
-                h += temp * math.log(1 / temp)
-            entropy += p * len(y_) * h
+            counts = np.unique(y_, return_counts=True)[1].astype('float32') * prob
+            #counts *= prob
+            #counts *= np.log(counts)
+            #for value in counts:
+            #    temp = prob * value
+            #    h += temp * math.log(1 / temp)
+            #h = -np.sum(counts)
+            entropy -= p * np.sum(counts * np.log(counts)) * len(y_)
         if entropy < min_entropy:
             min_entropy = entropy
             j_best = j
@@ -56,6 +55,7 @@ class Node:
     self.class_freq: class frequencies if self.is_leaf is True
     self.cl: class decision if self.is_leaf is True
     self.x: data associated to this node if self.is_leaf is True (used while growing tree)
+    self.split_value: value to split on
     """
 
     # by default each node is a leaf
@@ -70,7 +70,15 @@ class Node:
         self.split_value = None
 
 class DecisionTree:
+    """
+    Decision tree class
 
+    Data:
+    self.root: root node of the tree
+    self.train_accuracies: training accuracies found while training the model
+    self.test_accuracies: test accuracies found while training the model
+    self.valid_accuracies: validation accuracies found while training the model
+    """
     # D is a numpy array, last col is y
     # is_bool: list of booleans: True if data is boolean, False if data is int
     # threshold: threshold for training accuracy
@@ -81,7 +89,19 @@ class DecisionTree:
                  is_bool=None,
                  threshold=1.0,
                  prediction_frequency=1000,
-                 pruning=False):
+                 pruning=False,
+                 max_nodes=math.inf):
+        """
+        Constructor for a DecisionTree
+
+        Parameters:
+        D_train, D_test, D_valid: numpy arrays denoting train, test and val data
+        is_bool: indicator for each column whether it is boolean or not
+        threshold: accuracy till which the model needs to run
+        prediction_frequency: intervals at which accuracies need to be computed
+        pruning: boolean indicating whether pruning needs to be done or not
+        max_nodes: maximum nodes allowed in the tree
+        """
         self.train_accuracies = []
         self.test_accuracies = []
         self.valid_accuracies = []
@@ -93,11 +113,15 @@ class DecisionTree:
                     is_bool=is_bool,
                     threshold=threshold,
                     prediction_frequency=prediction_frequency,
-                    pruning=pruning)
+                    pruning=pruning,
+                    max_nodes=max_nodes)
         else:
             self.root = None
 
     def predict(self, D_test):
+        """
+        Predict labels of the given data using the model
+        """
         predicted = []
         for x in D_test:
             node = self.root
@@ -116,60 +140,56 @@ class DecisionTree:
                   is_bool,
                   threshold,
                   prediction_frequency,
-                  pruning):
+                  pruning,
+                  max_nodes):
+        """
+        Create the tree
+
+        Parameters:
+        D_train, D_test, D_valid: numpy arrays denoting train, test and val data
+        is_bool: indicator for each column whether it is boolean or not
+        threshold: accuracy till which the model needs to run
+        prediction_frequency: intervals at which accuracies need to be computed
+        pruning: boolean indicating whether pruning needs to be done or not
+        max_nodes: maximum nodes allowed in the tree
+
+        Raises:
+        Exception 'Empty data' if D_train is empty
+        """
+
         # empty data
         if len(D_train) == 0:
             raise Exception('Empty data')
-
         self.root = Node(x=D_train)
-
         q = deque()
         q.appendleft(self.root)
-
         node_list = []
         node_list.append(self.root)
-
-        predictions_completed = 0
-        train_accuracy = 0
-        test_accuracy = 0
-        valid_accuracy = 0
         total_nodes = 1
-        y_train = D_train[:, -1]
-        y_test = D_test[:, -1]
-        y_valid = D_valid[:, -1]
+        predictions_completed = 0
+        train_accuracy, test_accuracy, valid_accuracy = 0, 0, 0
+        y_train, y_test, y_valid = D_train[:, -1], D_test[:, -1], D_valid[:, -1]
 
-        while train_accuracy < threshold and q and total_nodes < NODE_MAX:
-
+        while train_accuracy < threshold and q and total_nodes < max_nodes:
             node = q.pop()
-
             # if node is pure
             if len(node.class_freq) == 1:
-
                 node.x = None
-
             else:
-
                 j, node.split_value, left_x, right_x = choose_attribute(node.x, is_bool)
-
                 if j == -1:
                     node.x = None
                     continue
-
                 node.x, node.cl, node.class_freq = None, None, None
                 node.attribute_num = j
                 node.is_leaf = False
-
                 node.left = Node(left_x)
                 node.right = Node(right_x)
-
-                node_list.append(node.left)
-                node_list.append(node.right)
-
                 q.appendleft(node.left)
                 q.appendleft(node.right)
-
+                node_list.append(node.left)
+                node_list.append(node.right)
                 total_nodes += 2
-
                 if total_nodes > (predictions_completed * prediction_frequency):
                     #print('total nodes expanded', total_nodes)
                     predictions_completed += 1
@@ -182,11 +202,9 @@ class DecisionTree:
                     self.train_accuracies.append(train_accuracy)
                     self.test_accuracies.append(test_accuracy)
                     self.valid_accuracies.append(valid_accuracy)
-
         # finally discard all data in leaf nodes
         for node in node_list:
             node.x = None
-
         if not pruning:
             return
 
@@ -212,8 +230,6 @@ def main():
     plt.plot(x, decision_tree.test_accuracies)
     plt.plot(x, decision_tree.valid_accuracies)
     plt.show()
-
-    pass
 
 if __name__ == '__main__':
     main()
