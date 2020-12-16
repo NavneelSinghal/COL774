@@ -234,7 +234,7 @@ def main():
         ax.set_ylabel('Theta_1')
         ax.set_zlim3d([-0.5, 2.5])
         ax.set_zlabel('Theta_2')
-        plot = ax.plot(t[0, 0], t[1, 0], t[2, 0])
+        plot = ax.plot([t[0, 0]], [t[1, 0]], [t[2, 0]])
         # actually the problem didn't ask for the animation
         # update function for the animation
         def update(nums):

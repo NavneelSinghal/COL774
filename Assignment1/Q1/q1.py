@@ -136,7 +136,7 @@ def main():
     ax1c.set_xlabel('Theta_0')
     ax1c.set_ylabel('Theta_1')
     ax1c.set_zlabel('Cost function')
-    plot1c = ax1c.plot(theta_vals[0, 0], theta_vals[1, 0], theta_vals[2, 0])
+    plot1c = ax1c.plot([theta_vals[0][0]], [theta_vals[1][0]], [theta_vals[2][0]])
 
     # update function for animation
     def update1c(nums):
@@ -159,7 +159,7 @@ def main():
     ax1d.contour(X, Y, Z, 100)
     ax1d.set_xlabel('Theta_0')
     ax1d.set_ylabel('Theta_1')
-    plot1d = ax1d.plot(theta_vals[0, 0], theta_vals[1, 0])
+    plot1d = ax1d.plot([theta_vals[0, 0]], [theta_vals[1, 0]])
     # update function for animation
     def update1d(nums):
         plot1d[0].set_data(theta_vals[0:2, :nums])
@@ -185,7 +185,7 @@ def main():
     ax1e1.set_xlabel('Theta_0')
     ax1e1.set_ylabel('Theta_1')
 
-    plot1e1 = ax1e1.plot(theta_vals1[0, 0], theta_vals1[1, 0])
+    plot1e1 = ax1e1.plot([theta_vals1[0, 0]], [theta_vals1[1, 0]])
 
     # update function for animation
     def update1e1(nums):
@@ -207,7 +207,7 @@ def main():
     ax1e2.set_xlabel('Theta_0')
     ax1e2.set_ylabel('Theta_1')
 
-    plot1e2 = ax1e2.plot(theta_vals2[0, 0], theta_vals2[1, 0])
+    plot1e2 = ax1e2.plot([theta_vals2[0, 0]], [theta_vals2[1, 0]])
 
     # update function for animation
     def update1e2(nums):
@@ -229,7 +229,7 @@ def main():
     ax1e3.set_xlabel('Theta_0')
     ax1e3.set_ylabel('Theta_1')
 
-    plot1e3 = ax1e3.plot(theta_vals3[0, 0], theta_vals3[1, 0])
+    plot1e3 = ax1e3.plot([theta_vals3[0, 0]], [theta_vals3[1, 0]])
 
     # update function for animation
     def update1e3(nums):
