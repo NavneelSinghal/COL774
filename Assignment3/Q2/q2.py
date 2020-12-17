@@ -84,10 +84,12 @@ class NeuralNetwork:
 
     def train(self, _x_train, _y_train):
         m = _x_train.shape[0]
-        X_train = np.hstack((np.ones((m, 1)), _x_train))
-        y_train = np.hstack((np.ones((m, 1)), _y_train))
+        X_train = np.concatenate((np.ones((m, 1)), _x_train), axis=1)
+        y_train = np.concatenate((np.ones((m, 1)), _y_train), axis=1)
         prev_error = math.inf
         epoch = 1
+        layer_outputs = [None for _ in range(len(self.architecture))]
+        delta = [None for _ in range(len(self.architecture))]
         while True:
             if epoch == self.max_iter:
                 break
@@ -106,17 +108,14 @@ class NeuralNetwork:
                 input_batch_X = X_train[i * M : (i + 1) * M]
                 input_batch_y = y_train[i * M : (i + 1) * M][:, 1:]
                 # forward propagate and keep track of outputs of each unit first
-                layer_outputs = [None for _ in range(len(self.architecture))]
                 layer_outputs[0] = input_batch_X
                 for layer in range(1, len(self.architecture)):
-                    layer_outputs[layer] = np.hstack((np.ones((M, 1)), self.activation[layer](layer_outputs[layer - 1] @ self.theta[layer])))
+                    layer_outputs[layer] = np.concatenate((np.ones((M, 1)), self.activation[layer](layer_outputs[layer - 1] @ self.theta[layer])), axis=1)
                 last_output = layer_outputs[-1][:, 1:]
                 last_d_activation = self.d_activation[-1]
                 # find error here
-                error = np.sum((input_batch_y - last_output) ** 2) / (2 * M)
-                average_error += error
+                average_error += np.sum((input_batch_y - last_output) ** 2) / (2 * M)
                 # find deltas
-                delta = [None for _ in range(len(self.architecture))]
                 delta[-1] = (input_batch_y - last_output).T * last_d_activation(last_output.T) / M
                 for layer in range(len(self.architecture) - 2, 0, -1): # theta, layer_outputs
                     delta[layer] = np.matmul(self.theta[layer + 1][1:, :], delta[layer + 1]) * self.d_activation[layer](layer_outputs[layer][:, 1:].T)
@@ -134,10 +133,10 @@ class NeuralNetwork:
 
     def predict(self, x_test):
         m = x_test.shape[0]
-        layer_output = np.hstack((np.array([np.ones(m)]).T, x_test))
+        layer_output = np.concatenate((np.array([np.ones(m)]).T, x_test), axis=1)
         for layer in range(1, len(self.architecture)):
             layer_output = self.activation[layer](np.matmul(layer_output, self.theta[layer]))
-            layer_output = np.hstack((np.array([np.ones(m)]).T, layer_output))
+            layer_output = np.concatenate((np.array([np.ones(m)]).T, layer_output), axis=1)
         return np.argmax(layer_output[:, 1:], axis=1)
 
 def one_hot_encoder(y, num_classes):
