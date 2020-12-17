@@ -118,7 +118,7 @@ class NeuralNetwork:
                 # find deltas
                 delta[-1] = (input_batch_y - last_output).T * last_d_activation(last_output.T) / M
                 for layer in range(len(self.architecture) - 2, 0, -1): # theta, layer_outputs
-                    delta[layer] = np.matmul(self.theta[layer + 1][1:, :], delta[layer + 1]) * self.d_activation[layer](layer_outputs[layer][:, 1:].T)
+                    delta[layer] = (self.theta[layer + 1][1:, :] @ delta[layer + 1]) * self.d_activation[layer](layer_outputs[layer][:, 1:].T)
                 # using deltas find gradient for each theta[layer] and
                 # do batch update on theta using backpropagation in deltas
                 for layer in range(1, len(self.architecture)):
@@ -135,7 +135,7 @@ class NeuralNetwork:
         m = x_test.shape[0]
         layer_output = np.concatenate((np.array([np.ones(m)]).T, x_test), axis=1)
         for layer in range(1, len(self.architecture)):
-            layer_output = self.activation[layer](np.matmul(layer_output, self.theta[layer]))
+            layer_output = self.activation[layer](layer_output @ self.theta[layer])
             layer_output = np.concatenate((np.array([np.ones(m)]).T, layer_output), axis=1)
         return np.argmax(layer_output[:, 1:], axis=1)
 
