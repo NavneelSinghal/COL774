@@ -6,15 +6,15 @@ import time
 
 np.random.seed(3141592)
 
+# TODO: replace 1e-4 by 1e-5
+
 # d_f(z) = dz/dx in terms of z = f(x)
 
 def relu(z):
     return np.maximum(z, 0.0)
 
 def d_relu(z):
-    x = np.copy(z)
-    x[x <= 0] = 0
-    return x
+    return np.where(z > 0, 1.0, 0.0)
 
 def sigmoid(z):
     return 1 / (1 + np.exp(-z))
@@ -76,8 +76,7 @@ class NeuralNetwork:
         self.architecture = [features] + architecture + [target_classes] # changed
         self.target_classes = target_classes
         # + 1 due to intercept
-        self.theta = [None] + [(2 * np.random.random((self.architecture[i] + 1, self.architecture[i + 1])) - 1) * init_range
-                for i in range(len(self.architecture) - 1)]
+        self.theta = [None] + [(2 * np.random.random((self.architecture[i]+1,self.architecture[i+1])) - 1) * math.sqrt(6/self.architecture[i]) for i in range(len(self.architecture)-1)]
         self.learning_rate = learning_rate
         self.eps = eps
         self.adaptive = adaptive
@@ -166,7 +165,7 @@ def mainB():
         activation = ['sigmoid' for i in range(num_hidden_layers + 1)]
         architecture = [hidden_layer_units] * num_hidden_layers
         target_classes = 10
-        learning_rate = 0.1
+        learning_rate = 0.001
         eps = 1e-4
         nn = NeuralNetwork(batch_size=batch_size,
                            features=features,
@@ -261,7 +260,94 @@ def mainC():
     plt.savefig('nn_time_plot_adaptive.png')
 
 def mainD():
-    pass
+    X_train, y_train = compressor(np.load(sys.argv[1])), np.load(sys.argv[2])
+    X_test, y_test = compressor(np.load(sys.argv[3])), np.load(sys.argv[4])
+    X_train = X_train.astype('float32') / 255
+    X_test = X_test.astype('float32') / 255
+    units = []
+    test_accuracies = []
+    train_accuracies = []
+    elapsed_time = []
+    num_hidden_layers = 2
+    hidden_layer_units = 100
+    architecture = [hidden_layer_units] * num_hidden_layers
+    features = 784
+    batch_size = 100
+    relu_activation = ['relu' for i in range(num_hidden_layers + 1)]
+    relu_activation[-1] = 'sigmoid'
+    sigmoid_activation = ['sigmoid' for i in range(num_hidden_layers + 1)]
+    target_classes = 10
+    learning_rate = 0.5
+    eps = 1e-4
+    for activation in [relu_activation, sigmoid_activation]:
+        nn = NeuralNetwork(batch_size=batch_size,
+                           features=features,
+                           architecture=architecture,
+                           target_classes=target_classes,
+                           activation=activation,
+                           learning_rate=learning_rate,
+                           eps=eps,
+                           adaptive=True)
+        t = time.time()
+        epoch, average_error = nn.train(np.copy(X_train), one_hot_encoder(y_train, target_classes))
+        y_pred_test = nn.predict(np.copy(X_test))
+        y_pred_train = nn.predict(np.copy(X_train))
+        elapsed_time.append(time.time() - t)
+        units.append(hidden_layer_units)
+        test_accuracies.append(100 * y_pred_test[y_pred_test == y_test].shape[0] / y_pred_test.shape[0])
+        train_accuracies.append(100 * y_pred_train[y_pred_train == y_train].shape[0] / y_pred_train.shape[0])
+        if activation == relu_activation:
+            print('relu')
+        else:
+            print('sigmoid')
+        print('hidden layer units:', hidden_layer_units)
+        print('test accuracy:', test_accuracies[-1], '%')
+        print('train accuracy:', train_accuracies[-1], '%')
+        print('time taken:', elapsed_time[-1])
+        print('number of epochs:', epoch)
+        print('average error:', average_error)
+
+def mainE():
+    X_train, y_train = compressor(np.load(sys.argv[1])), np.load(sys.argv[2])
+    X_test, y_test = compressor(np.load(sys.argv[3])), np.load(sys.argv[4])
+    X_train = X_train.astype('float32') / 255
+    X_test = X_test.astype('float32') / 255
+    units = []
+    test_accuracies = []
+    train_accuracies = []
+    elapsed_time = []
+    experimental_values = [100]
+    num_hidden_layers = 2
+    features = 784
+    batch_size = 100
+    activation = ['relu' for i in range(num_hidden_layers + 1)]
+    activation[-1] = 'sigmoid'
+    target_classes = 10
+    learning_rate = 0.5
+    eps = 1e-4
+    for hidden_layer_units in experimental_values:
+        architecture = [hidden_layer_units] * num_hidden_layers
+        from sklearn.neural_network import MLPClassifier
+        nn = MLPClassifier(activation='relu',
+                           solver='sgd',
+                           batch_size=batch_size,
+                           learning_rate='invscaling',
+                           learning_rate_init=0.5,
+                           max_iter=1000,
+                           verbose=False,
+                           n_iter_no_change=1)
+        t = time.time()
+        nn.fit(np.copy(X_train), y_train)
+        y_pred_test = nn.predict(np.copy(X_test))
+        y_pred_train = nn.predict(np.copy(X_train))
+        elapsed_time.append(time.time() - t)
+        units.append(hidden_layer_units)
+        test_accuracies.append(100 * y_pred_test[y_pred_test == y_test].shape[0] / y_pred_test.shape[0])
+        train_accuracies.append(100 * y_pred_train[y_pred_train == y_train].shape[0] / y_pred_train.shape[0])
+        print('hidden layer units:', hidden_layer_units)
+        print('test accuracy:', test_accuracies[-1], '%')
+        print('train accuracy:', train_accuracies[-1], '%')
+        print('time taken:', elapsed_time[-1])
 
 if __name__ == '__main__':
-    mainC()
+    mainD()
