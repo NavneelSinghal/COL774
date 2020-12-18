@@ -132,12 +132,18 @@ sys	0m8.464s
 
 part e
 
-hidden layer units: 100
-test accuracy: 93.01 %
-train accuracy: 98.95333333333333 %
-time taken: 37.95267987251282
+relu
+hidden layer units: (100, 100)
+test accuracy: 90.7 %
+train accuracy: 97.95166666666667 %
+time taken: 145.498943567276
+logistic
+hidden layer units: (100, 100)
+test accuracy: 90.87 %
+train accuracy: 97.70333333333333 %
 
-real	0m38.595s
-user	3m44.941s
-sys	0m3.259s
+time taken: 54.323132038116455
+real	3m22.488s
+user	18m52.939s
+sys	1m8.736s
 
