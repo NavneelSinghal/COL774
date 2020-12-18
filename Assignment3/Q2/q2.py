@@ -476,7 +476,7 @@ def mainE():
         print('train accuracy:', train_accuracies[-1], '%')
         print('time taken:', elapsed_time[-1])
 
-if __name__ == '__main__':
+def demo():
     part = sys.argv[5].lower()
     if part == 'b':
         mainB()
@@ -486,3 +486,65 @@ if __name__ == '__main__':
         mainD()
     elif part == 'e':
         mainE()
+
+def write_predictions(fname, arr):
+    np.savetxt(fname, arr, fmt="%d", delimiter="\n")
+
+def main():
+
+    # extracting data
+    X_train, y_train = compressor(np.load(sys.argv[1])), np.load(sys.argv[2])
+    X_test = compressor(np.load(sys.argv[3]))
+    X_train = X_train.astype('float32') / 255
+    X_test = X_test.astype('float32') / 255
+
+    # output file
+    output_file = sys.argv[4]
+    batch_size = int(sys.argv[5])
+    hidden_layer_list = [int(i) for i in sys.argv[6].split()]
+    given_activation = sys.argv[7]
+
+    # parameters for the neural network
+    num_hidden_layers = len(hidden_layer_list)
+
+    features = X_train.shape[1]
+    target_classes = y_train.max() + 1
+
+    activation = ['sigmoid' for i in range(num_hidden_layers + 1)]
+    if given_activation == 'relu':
+        for i in range(num_hidden_layers):
+            activation[i] = 'relu'
+
+    architecture = hidden_layer_list
+    learning_rate = 0.1
+    eps = 1e-4
+
+    #print(batch_size)
+    #print(features)
+    #print(architecture)
+    #print(target_classes)
+    #print(activation)
+    #print(learning_rate)
+    #print(eps)
+
+    # initializing the neural network
+    nn = NeuralNetwork(batch_size=batch_size,
+                       features=features,
+                       architecture=architecture,
+                       target_classes=target_classes,
+                       activation=activation,
+                       learning_rate=learning_rate,
+                       eps=eps,
+                       adaptive=False)
+
+    # training the model
+    epoch, average_error = nn.train(X_train, one_hot_encoder(y_train, target_classes))
+
+    # prediction on test and train data
+    y_pred_test = nn.predict(X_test)
+
+    write_predictions(output_file, y_pred_test)
+    pass
+
+if __name__ == '__main__':
+    main()
