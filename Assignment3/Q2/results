@@ -35,6 +35,43 @@ real	32m44.907s
 user	192m22.311s
 sys	3m58.100s
 
+learning rate 0.1:
+
+hidden layer units: 1
+test accuracy: 31.04 %
+train accuracy: 32.165 %
+time taken: 27.035956859588623
+number of epochs: 127
+average error: 0.37087353695200176
+hidden layer units: 10
+test accuracy: 88.84 %
+train accuracy: 96.555 %
+time taken: 26.81405544281006
+number of epochs: 108
+average error: 0.03415108627800237
+hidden layer units: 50
+test accuracy: 90.61 %
+train accuracy: 97.08 %
+time taken: 34.585092306137085
+number of epochs: 103
+average error: 0.027697094260525017
+hidden layer units: 100
+test accuracy: 90.61 %
+train accuracy: 97.025 %
+time taken: 50.3146710395813
+number of epochs: 104
+average error: 0.029244972437017052
+hidden layer units: 500
+test accuracy: 89.71 %
+train accuracy: 96.39 %
+time taken: 165.1363673210144
+number of epochs: 79
+average error: 0.037314344167241276
+
+real	5m10.005s
+user	29m24.213s
+sys	1m3.657s
+
 part c
 
 hidden layer units: 1

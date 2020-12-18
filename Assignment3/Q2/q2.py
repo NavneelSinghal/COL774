@@ -164,7 +164,7 @@ def mainB():
         activation = ['sigmoid' for i in range(num_hidden_layers + 1)]
         architecture = [hidden_layer_units] * num_hidden_layers
         target_classes = 10
-        learning_rate = 0.001
+        learning_rate = 0.1
         eps = 1e-4
         nn = NeuralNetwork(batch_size=batch_size,
                            features=features,
@@ -349,4 +349,4 @@ def mainE():
         print('time taken:', elapsed_time[-1])
 
 if __name__ == '__main__':
-    mainD()
+    mainB()
