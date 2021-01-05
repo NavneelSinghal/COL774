@@ -313,7 +313,7 @@ class DecisionTree:
         # computes correctly classified at each node
         # option = 1, 2, 3 correspond to train, test and val respectively
         def compute_correct(n, data, option=3):
-            computed_value = cnt_help(data[:, -1], n.cl)#np.bincount(data[:, -1].astype('int64'), minlength=self.num_classes)[int(n.cl)]
+            computed_value = np.bincount(data[:, -1].astype('int64'), minlength=self.num_classes)[int(n.cl)]
             if option == 3:
                 n.correct_ifleaf = computed_value
             elif option == 2:
@@ -631,4 +631,3 @@ def main():
 
 if __name__ == '__main__':
     main()
-

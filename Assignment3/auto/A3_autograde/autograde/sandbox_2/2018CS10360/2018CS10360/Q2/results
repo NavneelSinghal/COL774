@@ -1,0 +1,149 @@
+part b
+
+hidden layer units: 1
+test accuracy: 13.75 %
+train accuracy: 11.655 %
+time taken: 17.439830780029297
+number of epochs: 102
+average error: 0.45384838303254765
+hidden layer units: 10
+test accuracy: 83.38 %
+train accuracy: 92.475 %
+time taken: 205.92975449562073
+number of epochs: 966
+average error: 0.11271086153899998
+hidden layer units: 50
+test accuracy: 84.78 %
+train accuracy: 92.81833333333333 %
+time taken: 212.6546859741211
+number of epochs: 618
+average error: 0.09436030804152558
+hidden layer units: 100
+test accuracy: 84.75 %
+train accuracy: 92.78 %
+time taken: 311.73015427589417
+number of epochs: 580
+average error: 0.09525542622333064
+hidden layer units: 500
+test accuracy: 84.54 %
+train accuracy: 92.69333333333333 %
+time taken: 1216.0996282100677
+number of epochs: 513
+average error: 0.09545243414489511
+
+real	32m44.907s
+user	192m22.311s
+sys	3m58.100s
+
+learning rate 0.1:
+
+hidden layer units: 1
+test accuracy: 31.04 %
+train accuracy: 32.165 %
+time taken: 27.035956859588623
+number of epochs: 127
+average error: 0.37087353695200176
+hidden layer units: 10
+test accuracy: 88.84 %
+train accuracy: 96.555 %
+time taken: 26.81405544281006
+number of epochs: 108
+average error: 0.03415108627800237
+hidden layer units: 50
+test accuracy: 90.61 %
+train accuracy: 97.08 %
+time taken: 34.585092306137085
+number of epochs: 103
+average error: 0.027697094260525017
+hidden layer units: 100
+test accuracy: 90.61 %
+train accuracy: 97.025 %
+time taken: 50.3146710395813
+number of epochs: 104
+average error: 0.029244972437017052
+hidden layer units: 500
+test accuracy: 89.71 %
+train accuracy: 96.39 %
+time taken: 165.1363673210144
+number of epochs: 79
+average error: 0.037314344167241276
+
+real	5m10.005s
+user	29m24.213s
+sys	1m3.657s
+
+part c
+
+hidden layer units: 1
+test accuracy: 28.26 %
+train accuracy: 29.455 %
+time taken: 16.249089241027832
+number of epochs: 100
+average error: 0.3758468828601273
+hidden layer units: 10
+test accuracy: 88.97 %
+train accuracy: 96.21833333333333 %
+time taken: 13.331716299057007
+number of epochs: 69
+average error: 0.03825118321851797
+hidden layer units: 50
+test accuracy: 90.0 %
+train accuracy: 96.70833333333333 %
+time taken: 19.389600038528442
+number of epochs: 64
+average error: 0.031706549151799206
+hidden layer units: 100
+test accuracy: 89.99 %
+train accuracy: 96.57333333333334 %
+time taken: 28.607324361801147
+number of epochs: 63
+average error: 0.033498334829100834
+hidden layer units: 500
+test accuracy: 89.6 %
+train accuracy: 96.25 %
+time taken: 114.45683145523071
+number of epochs: 54
+average error: 0.03908552041040296
+
+real	3m13.069s
+user	18m46.649s
+sys	0m24.886s
+
+part d
+
+relu
+hidden layer units: 100
+test accuracy: 93.21 %
+train accuracy: 99.25166666666667 %
+time taken: 25.847768783569336
+number of epochs: 46
+average error: 0.007630899219331554
+sigmoid
+hidden layer units: 100
+test accuracy: 90.4 %
+train accuracy: 96.79333333333334 %
+time taken: 41.17030215263367
+number of epochs: 71
+average error: 0.030044049980605832
+
+real	1m7.430s
+user	6m33.122s
+sys	0m8.464s
+
+part e
+
+relu
+hidden layer units: (100, 100)
+test accuracy: 90.7 %
+train accuracy: 97.95166666666667 %
+time taken: 145.498943567276
+logistic
+hidden layer units: (100, 100)
+test accuracy: 90.87 %
+train accuracy: 97.70333333333333 %
+
+time taken: 54.323132038116455
+real	3m22.488s
+user	18m52.939s
+sys	1m8.736s
+
