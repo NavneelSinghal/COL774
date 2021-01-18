@@ -125,9 +125,6 @@ def accuracyLinear(x, y, w, b):
 
 # note that in this function, instead of x_train, y_train, we can use x_sv, y_sv
 def testGaussian(x, alpha, b, x_train, y_train, gamma=0.05):
-    #squares = squaredDistanceMatrix(x_train, x)
-    #squares *= -gamma
-    #squares = np.exp(squares)
     values = np.einsum('i,ij->j', alpha * y_train, np.exp(-gamma * squaredDistanceMatrix(x_train, x))) + b
     return [1 if v >= 0.0 else -1 for v in values]
 
@@ -170,26 +167,9 @@ def mainA(linearKernel=True, cl=0):
     if foundValid:
         x_valid, y_valid = filterOut(x_valid, y_valid, cl, (cl + 1) % 10)
 
-    #print('training vectors:', len(x_train))
-    #print('testing vectors:', len(x_test))
-
     if linearKernel:
         print('Linear Kernel results:')
         w, b, supportVectorIndices = computeParametersLinearKernel(x_train, y_train)
-
-        # cross verification
-        #from sklearn import svm
-        #clf = svm.SVC(kernel='linear', C=1.0)
-        #clf.fit(x_train, y_train)
-        #print('b for sklearn:', clf.intercept_[0])
-        #print('number of support vectors for sklearn:', len(clf.support_vectors_))
-
-        #supportVectors = x_train[supportVectorIndices].tolist()
-        #print('support vectors:', len(supportVectors))
-        #for supportVector in supportVectors:
-        #    print([int(x * 1e3) / 1e3 for x in supportVector])
-        #print('w:', [int(x * 1e3) / 1e3 for x in w])
-        #print('b:', b)
         print('accuracy on train:', accuracyLinear(x_train, y_train, w, b))
         print('accuracy on test:', accuracyLinear(x_test, y_test, w, b))
         if foundValid:
@@ -199,19 +179,6 @@ def mainA(linearKernel=True, cl=0):
         print('Gaussian Kernel results:')
         b, alpha, supportVectorIndices = computeParametersGaussianKernel(x_train, y_train)
 
-        # cross verification
-        #from sklearn import svm
-        #clf = svm.SVC(C=1.0, gamma=0.05)
-        #clf.fit(x_train, y_train)
-        #print('b for sklearn:', clf.intercept_[0])
-        #print('number of support vectors for sklearn:', len(clf.support_vectors_))
-
-        #supportVectors = x_train[supportVectorIndices].tolist()
-        #print('support vectors:', len(supportVectors))
-        #for supportVector in supportVectors:
-        #    print([int(x * 1e3) / 1e3 for x in supportVector])
-        #print('b:', b)
-        #print('alpha:', alpha)
         x_sv = x_train[supportVectorIndices]
         y_sv = y_train[supportVectorIndices]
         alpha_sv = alpha[supportVectorIndices]
@@ -289,7 +256,6 @@ def mainB():
         x_valid /= 255
         x_valid_old = x_valid
 
-    # use splitData instead
     x_train = splitData(x_train, y_train)
     x_test = splitData(x_test, y_test)
     if foundValid:
@@ -304,8 +270,6 @@ def mainB():
         t = time.time()
         for i in range(10):
             for j in range(i + 1, 10):
-                #print(time.time() - t)
-                #print('starting', i, 'and', j)
                 x_concat = np.concatenate((x_train[i], x_train[j]))
                 y_concat = np.concatenate((-1 * np.ones(len(x_train[i])), np.ones(len(x_train[j]))))
                 b[i][j], alpha_sv[i][j], sv_indices[i][j] = efficientComputeParametersGaussianKernel(x_concat, y_concat)
@@ -320,7 +284,6 @@ def mainB():
             supportVectorIndices = sv_indices[i][j]
             x_sv = np.concatenate((x_train[i], x_train[j]))[supportVectorIndices]
             y_sv = np.concatenate((-1 * np.ones(len(x_train[i])), np.ones(len(x_train[j]))))[supportVectorIndices]
-            #print('starting test prediction on classifier', i, j)
             y_predicted = testGaussian(x_test_old, alpha_sv[i][j], b[i][j], x_sv, y_sv, gamma=0.05)
             for k in range(len(x_test_old)):
                 pred = y_predicted[k]
@@ -404,7 +367,6 @@ def mainB():
         print(confusion_matrix)
         print('sklearn validation accuracy:', np.trace(confusion_matrix) / np.sum(confusion_matrix))
 
-# remember to print y as integers
 def mainBCrossValidation():
 
     C_poss = [1e-5, 1e-3, 1.0, 5.0, 10.0]
@@ -452,15 +414,10 @@ def mainBCrossValidation():
             current_y_train = np.concatenate(tuple([y_folds[j] for j in range(num_folds) if j != i]))
             current_x_test = x_folds[i]
             current_y_test = y_folds[i]
-            #print(current_x_train.shape)
-            #print(current_x_test.shape)
-            #print(current_y_train.shape)
-            #print(current_y_test.shape)
             t = time.time()
             clf = svm.SVC(C=C, gamma=0.05)
             clf.fit(current_x_train, current_y_train)
             current_accuracy += metrics.accuracy_score(current_y_test, clf.predict(current_x_test))
-            #print(current_accuracy)
             print('time taken:', time.time() - t)
         current_accuracy /= 5
         c_accuracy.append(current_accuracy)

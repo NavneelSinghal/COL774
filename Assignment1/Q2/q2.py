@@ -55,20 +55,8 @@ def stochastic_gradient_descent(x, y, b, eta=1e-3, epsilon=1e-2, k=10): # b = ba
 
         for i in range(0, b * (m // b), b):
 
-            # in what follows,
             # grad = gradient value for this mini-batch
             # loss = loss value for this mini-batch
-
-            # vectorized version below
-            #grad = np.array([0., 0., 0.])
-            #loss = 0
-            #for j in range(b):
-            #    diff_error = np.dot(theta, x[i + j]) - y[i + j]
-            #    grad += diff_error * x[i + j]
-            #    loss += diff_error ** 2
-            #loss /= (2 * b)
-            #grad /= b
-
             x_batch = x[i : i + b].T
             y_batch = y[i : i + b]
             diff_errors = np.tile(np.matmul(theta[np.newaxis, :], x_batch)[0] - y_batch, (3, 1))
@@ -157,7 +145,6 @@ def main():
                 pickle_file = fname
                 pickle_found = True
                 break
-    #if isfile(join(out_dir, 'store.pickle')):
     if pickle_found:
         theta, thetas, iterations, loss = pickle.load(open(pickle_file, 'rb'))
     else:
@@ -175,9 +162,6 @@ def main():
                 print('batch size ' + str(b) + ' done')
                 print(theta[i])
                 print('time taken: ' + str(new_time - old_time))
-            #print(theta[i])
-            #print(iterations[i])
-            #print(loss[i][-1])
         pickle.dump((theta, thetas, iterations, loss), open(join(out_dir, 'store.pickle'), 'wb'))
 
 
@@ -235,7 +219,6 @@ def main():
         ax.set_zlim3d([-0.5, 2.5])
         ax.set_zlabel('Theta_2')
         plot = ax.plot([t[0, 0]], [t[1, 0]], [t[2, 0]])
-        # actually the problem didn't ask for the animation
         # update function for the animation
         def update(nums):
             plot[0].set_data(t[0:2, :nums])

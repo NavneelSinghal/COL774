@@ -35,16 +35,7 @@ def grad_desc(x, y, eta=1e-2, epsilon=1e-15):
 
     while True:
 
-        # cost function and gradient calculation - vectorized version below
-        #x, y = x.T, y.T
-        #cost_value = 0
-        #grad = 0
-        #for i in range(m):
-        #    cost_value += (np.dot(theta, x[i]) - y[i]) ** 2
-        #    grad += (np.dot(theta, x[i]) - y[i]) * x[i]
-        #grad /= m
-        #cost_value /= (2 * m)
-
+        # cost function and gradient calculation
         diff_errors = np.tile(np.matmul(theta[np.newaxis, :], x)[0] - y[0], (2, 1))
         grad = np.sum(diff_errors * x, axis=1) / m
         cost_value = np.sum(diff_errors[0] ** 2) / (2 * m)
@@ -194,7 +185,6 @@ def main():
 
     # performing the animation
     anim1e1 = animation.FuncAnimation(fig1e1, update1e1, theta_vals1.shape[1], interval=200, blit=True)
-    #anim1e1.save(join(out_dir, '1e1.gif'), writer="imagemagick")
     update1e1(theta_vals1.shape[1])
     if part == 'e':
         fig1e1.savefig(join(out_dir, '1e1last_frame.png'))
@@ -216,7 +206,6 @@ def main():
 
     # performing the animation
     anim1e2 = animation.FuncAnimation(fig1e2, update1e2, theta_vals2.shape[1], interval=200, blit=True)
-    #anim1e2.save(join(out_dir, '1e2.gif'), writer="imagemagick")
     update1e2(theta_vals2.shape[1])
     if part == 'e':
         fig1e2.savefig(join(out_dir, '1e2last_frame.png'))
@@ -238,7 +227,6 @@ def main():
 
     # performing the animation
     anim1e3 = animation.FuncAnimation(fig1e3, update1e3, theta_vals3.shape[1], interval=200, blit=True)
-    #anim1e3.save(join(out_dir, '1e3.gif'), writer="imagemagick")
     update1e3(theta_vals3.shape[1])
     if part == 'e':
         fig1e3.savefig(join(out_dir, '1e3last_frame.png'))
