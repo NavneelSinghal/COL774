@@ -519,14 +519,6 @@ def main():
     learning_rate = 0.1
     eps = 1e-4
 
-    #print(batch_size)
-    #print(features)
-    #print(architecture)
-    #print(target_classes)
-    #print(activation)
-    #print(learning_rate)
-    #print(eps)
-
     # initializing the neural network
     nn = NeuralNetwork(batch_size=batch_size,
                        features=features,

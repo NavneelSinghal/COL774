@@ -57,7 +57,6 @@ class Node:
     self.correct_ifleaf: correctly classified validation datapoints if it were a leaf
     """
 
-    # by default each node is a leaf
     def __init__(self, x, x_test=None, x_valid=None, par=None):
         self.parent = par
         self.left = None
@@ -124,7 +123,7 @@ class DecisionTree:
         self.train_accuracies = []
         self.test_accuracies = []
         self.valid_accuracies = []
-        self.num_classes = int(D_train[:, -1].max()) + 1 # at least these many classes
+        self.num_classes = int(D_train[:, -1].max()) + 1
         self.valid_accuracies_after_pruning = []
         self.train_accuracies_after_pruning = []
         self.test_accuracies_after_pruning = []
@@ -210,13 +209,10 @@ class DecisionTree:
             return np.count_nonzero(arr == element)
         def cnt(n):
             return cnt_help(n.x[:, -1], n.cl)
-            #return np.bincount(n.x[:, -1].astype('int64'), minlength=self.num_classes)[int(n.cl)]
         def cnt_t(n):
             return cnt_help(n.x_test[:, -1], n.cl)
-            #return np.bincount(n.x_test[:, -1].astype('int64'), minlength=self.num_classes)[int(n.cl)]
         def cnt_v(n):
             return cnt_help(n.x_valid[:, -1], n.cl)
-            #return np.bincount(n.x_valid[:, -1].astype('int64'), minlength=self.num_classes)[int(n.cl)]
 
         total_correct_train = cnt(self.root)
         total_correct_test = cnt_t(self.root)
@@ -276,18 +272,6 @@ class DecisionTree:
                 node.x, node.class_freq = None, None
                 node.x_test, node.x_valid = None, None
 
-                #if total_nodes > (predictions_completed * prediction_frequency):
-                #    print('total nodes expanded', total_nodes)
-                #    predictions_completed += 1
-                #    train_pred = self.predict(D_train[:, :-1])
-                #    test_pred = self.predict(D_test[:, :-1])
-                #    valid_pred = self.predict(D_valid[:, :-1])
-                #    train_accuracy = len(y_train[y_train == train_pred]) / len(train_pred)
-                #    test_accuracy = len(y_test[y_test == test_pred]) / len(test_pred)
-                #    valid_accuracy = len(y_valid[y_valid == valid_pred]) / len(valid_pred)
-                #    self.train_accuracies.append(train_accuracy)
-                #    self.test_accuracies.append(test_accuracy)
-                #    self.valid_accuracies.append(valid_accuracy)
         # finally discard all data in leaf nodes
         for node in node_list:
             node.x = None
@@ -313,7 +297,7 @@ class DecisionTree:
         # computes correctly classified at each node
         # option = 1, 2, 3 correspond to train, test and val respectively
         def compute_correct(n, data, option=3):
-            computed_value = cnt_help(data[:, -1], n.cl)#np.bincount(data[:, -1].astype('int64'), minlength=self.num_classes)[int(n.cl)]
+            computed_value = cnt_help(data[:, -1], n.cl)
             if option == 3:
                 n.correct_ifleaf = computed_value
             elif option == 2:
@@ -341,13 +325,12 @@ class DecisionTree:
                 n.parent.correct_train = n.parent.left.correct_train + n.parent.right.correct_train
                 heapq.heappush(heap, (n.parent.correct - n.parent.correct_ifleaf, n.parent))
                 n = n.parent
-                #propagate_confusion_upwards(n.parent, heap)
 
         compute_correct(self.root, D_valid, 3)
         compute_correct(self.root, D_test, 2)
         compute_correct(self.root, D_train, 1)
-        # now create a heap, and put all nodes in it
 
+        # now create a heap, and put all nodes in it
         heap = []
         for node in node_list:
             if not node.is_leaf:
@@ -610,7 +593,6 @@ def main():
     pruning = (sys.argv[1] == '2')
 
     train = np.loadtxt(sys.argv[2], delimiter=',', skiprows=2)
-    # change val and test, and skip rows
     test = np.loadtxt(sys.argv[4], delimiter=',', skiprows=1)
     valid = np.loadtxt(sys.argv[3], delimiter=',', skiprows=1)
 
